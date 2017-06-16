@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Input, Header, Button } from 'semantic-ui-react'
 
 class App extends Component {
+  constructor() {
+    super()
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+
+  }
+
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+        <div className="App">
+          <div className="App-vc">
+            <Header size='large'>How do you feel?</Header>
+            <Input placeholder='...' />
+            <Button primary onClick={this.onClick}>Generate</Button>
+          </div>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
     );
   }
 }
