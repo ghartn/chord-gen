@@ -1,0 +1,19 @@
+{
+  "name": "chord-gen",
+  "version": "0.1.0",
+  "description": "Chord generator with an AI interpreter for moods, eventually",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server.js",
+    "client": "nodemon start-client.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^3.4.0",
+    "nodemon": "^1.11.0"
+  },
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
