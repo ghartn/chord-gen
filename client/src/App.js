@@ -1,47 +1,46 @@
-import React, {Component} from 'react';
-import './App.css';
-import {Input, Header, Button} from 'semantic-ui-react';
-import axios from 'axios';
+import React, { Component } from "react";
+import "./App.css";
+import axios from "axios";
 
 class App extends Component {
-  constructor() {
-    super()
-    this.onClick = this
-      .onClick
-      .bind(this);
-    this.onChange = this
-      .onChange
-      .bind(this);
-  }
+	constructor() {
+		super();
+		this.onClick = this.onClick.bind(this);
+		this.onChange = this.onChange.bind(this);
+	}
 
-  onClick() {
-    axios
-      .post('/api/watson/tone', this.state)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  }
+	onClick() {
+		axios
+			.post("/api/watson/tone", this.state)
+			.then(res => {
+				console.log(res);
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
 
-  onChange(e) {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
-  }
+	onChange(e) {
+		this.setState({
+			[e.target.name]: e.target.value
+		});
+	}
 
-  render() {
-    return (
-      <div className="App">
-        <div className="App-vc">
-          <Header size='large'>How do you feel?</Header>
-          <Input name="feel" placeholder='...' onChange={this.onChange}/>
-          <Button primary onClick={this.onClick}>Generate</Button>
-        </div>
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div className="App">
+				<div className="App-vc">
+					<input
+						className="input-field"
+						name="feel"
+						placeholder="How do you feel?"
+						onChange={this.onChange}
+					/>
+					<button className="btn" onClick={this.onClick}>Generate a progression</button>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default App;

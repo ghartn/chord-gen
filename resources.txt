@@ -1,0 +1,17 @@
+http://www.ethanhein.com/wp/2010/scales-and-emotions/
+
+- use the euclidean distance to map to scales that we have defined
+
+Q: should the same input always have the same output? pure function? function of slight randomness?
+
+1. Generate key/scale
+
+2. Hash table of chords and chords that you can lead into (online resource)
+
+3. Loop through chords and possibilites
+	need to have reference of emotions that couplet chords invoke as well as individual chords (useful for starting) (everything in roman numeral notation)
+	- reference the youtube video that defines these
+
+4. output a roman numeral progression (and 7th/9th etc)
+
+5. map to chords in the key/scale we picked!

@@ -22,6 +22,7 @@ if (process.env.NODE_ENV === 'production') {
 app
   .post('/api/watson/tone', function (req, res, next) {
     var feel = req.body.feel;
+    if(!feel) feel = "";
     tone_analyzer.tone({
       text: feel
     }, function (err, tone) {

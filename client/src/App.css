@@ -1,12 +1,32 @@
 .App {
-  display: table;
-  text-align: center;
-  height: 100%;
-  width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
 }
 
 .App-vc {
-  display: table-cell;
-  vertical-align: middle;
-  margin: 0 auto;
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+button.btn {
+    display: block;
+    width: 100%;
+    margin: 0.5em 0;
+    padding: 1em;
+    border-radius: 0.2em;
+    border: 1px solid #ccc;
+}
+
+.input-field {
+    display: block;
+    margin: 0.5em 0;
+    padding: 1em;
+    border-radius: 0.2em;
+    border: 1px solid #ccc;
 }
