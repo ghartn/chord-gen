@@ -1,11 +1,8 @@
 html,
-body {
+body,
+div#root  {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
-    height: 100%;
-}
-
-div#root {
+    font-family: 'Roboto', sans-serif;
     height: 100%;
 }
