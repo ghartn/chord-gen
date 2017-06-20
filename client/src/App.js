@@ -13,7 +13,7 @@ class App extends Component {
 		axios
 			.post("/api/watson/tone", this.state)
 			.then(res => {
-				console.log(res);
+				console.log(res.data);
 			})
 			.catch(err => {
 				console.log(err);

@@ -1,10 +1,10 @@
 http://www.ethanhein.com/wp/2010/scales-and-emotions/
 
-- use the euclidean distance to map to scales that we have defined
+- use the euclidean distance to map to scales that we have defined DONE
 
 Q: should the same input always have the same output? pure function? function of slight randomness?
 
-1. Generate key/scale
+1. Generate key/scale DONE
 
 2. Hash table of chords and chords that you can lead into (online resource)
 
