@@ -21,7 +21,7 @@ router.post("/watson/tone", function(req, res, next) {
 		function(err, tone) {
 			if (err) console.log(err);
 			else {
-				let tonePoint = cleanTone(tone);
+				let tonePoint = generateTonePoint(tone);
 				let scale = determineScale(tonePoint);
 				res.send(scale);
 			}
@@ -39,7 +39,7 @@ function euclideanDistance(point1, point2) {
 	return euclideanDistance;
 }
 
-function cleanTone(tone) {
+function generateTonePoint(tone) {
 	let point = [];
 	tone = tone.document_tone;
 	for (var key in tone.tone_categories) {

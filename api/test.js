@@ -90,7 +90,7 @@ function main() {
     ]
   }
 }
-	let tonePoint = cleanTone(tone);
+	let tonePoint = generateTonePoint(tone);
 	let generatedScale = determineScale(tonePoint);
 	console.log(generatedScale);
 }
@@ -105,7 +105,7 @@ function euclideanDistance(point1, point2) {
 	return euclideanDistance;
 }
 
-function cleanTone(tone) {
+function generateTonePoint(tone) {
 	let point = [];
 	tone = tone.document_tone;
 	for (var key in tone.tone_categories) {
