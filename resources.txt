@@ -15,3 +15,10 @@ Q: should the same input always have the same output? pure function? function of
 4. output a roman numeral progression (and 7th/9th etc)
 
 5. map to chords in the key/scale we picked!
+
+Alternate idea:
+
+Use hook theory api to make it easier to pick the next chord
+	-but need to analyze each chord choice for emotional response to keep consistent!
+
+Another idea: generate random progression!
