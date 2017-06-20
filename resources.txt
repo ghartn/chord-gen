@@ -22,3 +22,24 @@ Use hook theory api to make it easier to pick the next chord
 	-but need to analyze each chord choice for emotional response to keep consistent!
 
 Another idea: generate random progression!
+
+Ideas
+	Pick 1st chords from tone
+	get list of chords that can lead to
+	of these, pick one with greatest tone match?
+	repeat 4x
+	
+	problem: how to include chord vars: 7th/9th etc
+
+2)	Pick 1st chord from tone
+	get list fo chords from hooktheory that follow
+	for each - analyze the tone response of the chord (or couplet?)
+
+	hook theory uses major notation - can transpose to relative minor later - add dropdown for key? or random? - needs ui
+	get rid of scales and keep only major/minor? determine scale might be useless
+
+- want to use tone - how to analyze pairs of chords and their emotions? keeping a massive map might be the only way?
+
+- maybe start with a random progression based off hooktheory/input?
+	- have to protect against loops back to same chord ie i-II-i-II (or maybe not) - randomly add 7th?
+
