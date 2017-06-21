@@ -1,98 +1,99 @@
 var scales = require("./scales");
+var chords = require("./chords");
 
 function main() {
 	let tone = {
-  "document_tone": {
-    "tone_categories": [
-      {
-        "tones": [
-          {
-            "score": 0.019665,
-            "tone_id": "anger",
-            "tone_name": "Anger"
-          },
-          {
-            "score": 0.014064,
-            "tone_id": "disgust",
-            "tone_name": "Disgust"
-          },
-          {
-            "score": 0.554403,
-            "tone_id": "fear",
-            "tone_name": "Fear"
-          },
-          {
-            "score": 0.007789,
-            "tone_id": "joy",
-            "tone_name": "Joy"
-          },
-          {
-            "score": 0.956565,
-            "tone_id": "sadness",
-            "tone_name": "Sadness"
-          }
-        ],
-        "category_id": "emotion_tone",
-        "category_name": "Emotion Tone"
-      },
-      {
-        "tones": [
-          {
-            "score": 0.970179,
-            "tone_id": "analytical",
-            "tone_name": "Analytical"
-          },
-          {
-            "score": 0,
-            "tone_id": "confident",
-            "tone_name": "Confident"
-          },
-          {
-            "score": 0,
-            "tone_id": "tentative",
-            "tone_name": "Tentative"
-          }
-        ],
-        "category_id": "language_tone",
-        "category_name": "Language Tone"
-      },
-      {
-        "tones": [
-          {
-            "score": 0.220893,
-            "tone_id": "openness_big5",
-            "tone_name": "Openness"
-          },
-          {
-            "score": 0.273139,
-            "tone_id": "conscientiousness_big5",
-            "tone_name": "Conscientiousness"
-          },
-          {
-            "score": 0.539658,
-            "tone_id": "extraversion_big5",
-            "tone_name": "Extraversion"
-          },
-          {
-            "score": 0.599812,
-            "tone_id": "agreeableness_big5",
-            "tone_name": "Agreeableness"
-          },
-          {
-            "score": 0.086649,
-            "tone_id": "emotional_range_big5",
-            "tone_name": "Emotional Range"
-          }
-        ],
-        "category_id": "social_tone",
-        "category_name": "Social Tone"
-      }
-    ]
-  }
-}
+		document_tone: {
+			tone_categories: [
+				{
+					tones: [
+						{
+							score: 0.067271,
+							tone_id: "anger",
+							tone_name: "Anger"
+						},
+						{
+							score: 0.052218,
+							tone_id: "disgust",
+							tone_name: "Disgust"
+						},
+						{
+							score: 0.144031,
+							tone_id: "fear",
+							tone_name: "Fear"
+						},
+						{
+							score: 0.367503,
+							tone_id: "joy",
+							tone_name: "Joy"
+						},
+						{
+							score: 0.37734,
+							tone_id: "sadness",
+							tone_name: "Sadness"
+						}
+					],
+					category_id: "emotion_tone",
+					category_name: "Emotion Tone"
+				},
+				{
+					tones: [
+						{
+							score: 0.620279,
+							tone_id: "analytical",
+							tone_name: "Analytical"
+						},
+						{
+							score: 0,
+							tone_id: "confident",
+							tone_name: "Confident"
+						},
+						{
+							score: 0.994446,
+							tone_id: "tentative",
+							tone_name: "Tentative"
+						}
+					],
+					category_id: "language_tone",
+					category_name: "Language Tone"
+				},
+				{
+					tones: [
+						{
+							score: 0.142912,
+							tone_id: "openness_big5",
+							tone_name: "Openness"
+						},
+						{
+							score: 0.135114,
+							tone_id: "conscientiousness_big5",
+							tone_name: "Conscientiousness"
+						},
+						{
+							score: 0.047882,
+							tone_id: "extraversion_big5",
+							tone_name: "Extraversion"
+						},
+						{
+							score: 0.893164,
+							tone_id: "agreeableness_big5",
+							tone_name: "Agreeableness"
+						},
+						{
+							score: 0.004524,
+							tone_id: "emotional_range_big5",
+							tone_name: "Emotional Range"
+						}
+					],
+					category_id: "social_tone",
+					category_name: "Social Tone"
+				}
+			]
+		}
+	};
 	let tonePoint = generateTonePoint(tone);
-	let generatedScale = determineScale(tonePoint);
-	console.log(generatedScale);
+	let chord = generateChord(tonePoint);
+  console.log(chord);
 }
 
 function euclideanDistance(point1, point2) {
@@ -115,7 +116,6 @@ function generateTonePoint(tone) {
 			point.push(tones[key].score);
 		}
 	}
-	console.log(point)
 	return point;
 }
 
@@ -134,6 +134,18 @@ function determineScale(tonePoint) {
 	return scale;
 }
 
-
+function generateChord(tonePoint) {
+	var distances = [];
+  var keys = [];
+  for(var key in chords) {
+    let chordPoint = chords[key];
+    keys.push(key);
+    distances.push(euclideanDistance(tonePoint, chordPoint));
+  }
+	let minDistance = Math.min(...distances);
+	let chordIndex = distances.indexOf(minDistance);
+	let generatedChord = keys[chordIndex];
+  return generatedChord;
+}
 
 main();
