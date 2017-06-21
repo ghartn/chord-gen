@@ -11,7 +11,7 @@
     display: table-cell;
     vertical-align: middle;
     margin: 0 auto;
-    max-width: 600px;
+    min-width: 600px;
 }
 
 button.btn {
@@ -26,8 +26,10 @@ button.btn {
 
 .input-field {
     display: block;
+    box-sizing: border-box;
     margin: 0.5em 0;
     padding: 1em;
+    width: 100%;
     border-radius: 0.2em;
     border: 1px solid #ccc;
     font-family: 'Roboto', sans-serif;

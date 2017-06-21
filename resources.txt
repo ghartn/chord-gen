@@ -43,3 +43,7 @@ Ideas
 - maybe start with a random progression based off hooktheory/input?
 	- have to protect against loops back to same chord ie i-II-i-II (or maybe not) - randomly add 7th?
 
+https://www.hooktheory.com/api/trends/docs
+http://forum.hooktheory.com/t/vizualitation-of-all-chord-progressions-kinda/164/3
+http://forum.hooktheory.com/t/trends-api-chord-input/272
+https://github.com/mexindian/Musical-chord-progressions/blob/master/Chord%20progression%20probability.R

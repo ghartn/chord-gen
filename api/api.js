@@ -1,7 +1,10 @@
 var express = require("express");
 var router = express.Router();
+var axios = require("axios");
 var scales = require("./scales");
 var chords = require("./chords");
+var authKey = null;
+const HOOK_THEORY = "https://api.hooktheory.com/v1/";
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -22,9 +25,10 @@ router.post("/watson/tone", function(req, res, next) {
 		function(err, tone) {
 			if (err) console.log(err);
 			else {
+				while(authKey === null);
 				let tonePoint = generateTonePoint(tone);
 				let scale = determineScale(tonePoint);
-				let chord = generateScale(tonePoint);
+				let chord = generateChord(tonePoint);
 				res.send({
 					scale: scale,
 					chord: chord
@@ -33,6 +37,17 @@ router.post("/watson/tone", function(req, res, next) {
 		}
 	);
 });
+
+function authorizeHookTheory() {
+	axios
+		.post( HOOK_THEORY + "users/auth", {
+			username: "ghartn",
+			password: "peanutbuttermonkeywrench"
+		})
+		.then(res => {
+			authKey = res.body.activkey;
+		});
+}
 
 function euclideanDistance(point1, point2) {
 	if (point1.length != point2.length) return -1;
