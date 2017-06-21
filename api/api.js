@@ -25,7 +25,6 @@ router.post("/watson/tone", function(req, res, next) {
 		function(err, tone) {
 			if (err) console.log(err);
 			else {
-				while(authKey === null);
 				let tonePoint = generateTonePoint(tone);
 				let scale = determineScale(tonePoint);
 				let chord = generateChord(tonePoint);
