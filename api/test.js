@@ -93,7 +93,7 @@ function main() {
 	};
 	let tonePoint = generateTonePoint(tone);
 	let chord = generateChord(tonePoint);
-  console.log(chord);
+	console.log(chord);
 }
 
 function euclideanDistance(point1, point2) {
@@ -136,16 +136,16 @@ function determineScale(tonePoint) {
 
 function generateChord(tonePoint) {
 	var distances = [];
-  var keys = [];
-  for(var key in chords) {
-    let chordPoint = chords[key];
-    keys.push(key);
-    distances.push(euclideanDistance(tonePoint, chordPoint));
-  }
+	var keys = [];
+	for (var key in chords) {
+		let chordPoint = chords[key];
+		keys.push(key);
+		distances.push(euclideanDistance(tonePoint, chordPoint));
+	}
 	let minDistance = Math.min(...distances);
 	let chordIndex = distances.indexOf(minDistance);
 	let generatedChord = keys[chordIndex];
-  return generatedChord;
+	return generatedChord;
 }
 
 main();

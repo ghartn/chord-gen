@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var scales = require("./scales");
+var chords = require("./chords");
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -23,7 +24,11 @@ router.post("/watson/tone", function(req, res, next) {
 			else {
 				let tonePoint = generateTonePoint(tone);
 				let scale = determineScale(tonePoint);
-				res.send(scale);
+				let chord = generateScale(tonePoint);
+				res.send({
+					scale: scale,
+					chord: chord
+				});
 			}
 		}
 	);
@@ -65,6 +70,20 @@ function determineScale(tonePoint) {
 	let determinedScale = scales[scaleIndex];
 	let scale = Object.keys(determinedScale)[0];
 	return scale;
+}
+
+function generateChord(tonePoint) {
+	var distances = [];
+	var keys = [];
+	for (var key in chords) {
+		let chordPoint = chords[key];
+		keys.push(key);
+		distances.push(euclideanDistance(tonePoint, chordPoint));
+	}
+	let minDistance = Math.min(...distances);
+	let chordIndex = distances.indexOf(minDistance);
+	let generatedChord = keys[chordIndex];
+	return generatedChord;
 }
 
 module.exports = router;
