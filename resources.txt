@@ -1,6 +1,5 @@
-http://www.ethanhein.com/wp/2010/scales-and-emotions/
-
 - use the euclidean distance to map to scales that we have defined DONE
+	- we use this function to determine the distance between different tones that have been analyzed
 
 Q: should the same input always have the same output? pure function? function of slight randomness?
 
@@ -43,7 +42,13 @@ Ideas
 - maybe start with a random progression based off hooktheory/input?
 	- have to protect against loops back to same chord ie i-II-i-II (or maybe not) - randomly add 7th?
 
+http://www.ethanhein.com/wp/2010/scales-and-emotions/
 https://www.hooktheory.com/api/trends/docs
 http://forum.hooktheory.com/t/vizualitation-of-all-chord-progressions-kinda/164/3
 http://forum.hooktheory.com/t/trends-api-chord-input/272
 https://github.com/mexindian/Musical-chord-progressions/blob/master/Chord%20progression%20probability.R
+https://pappubahry.com/misc/piano_diaries/hooktheory_api/
+https://www.pinterest.com/pin/524950900296158812/
+
+later: for transposing progressions to actual chords
+	teoria.js, sharp11.js, tonal.js (one of these)
