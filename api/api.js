@@ -3,13 +3,16 @@ var router = express.Router();
 var axios = require("axios");
 var scales = require("./scales");
 var chords = require("./chords");
-var sample = require("lodash/sample");
+var keys = require("./keys");
+var chordConversions = require("./chordConversions");
 var authKey = null;
 const HOOK_THEORY = "https://api.hooktheory.com/v1/";
 const AUTH = "users/auth";
 const TRENDS = "trends/nodes?cp=";
 const USERNAME = "ghartn";
 const PASSWORD = "peanutbuttermonkeywrench";
+var tonalProgression = require('tonal-progression')
+var tonalChord = require('tonal-chord');
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -22,6 +25,7 @@ var tone_analyzer = new ToneAnalyzerV3({
 
 router.post("/watson/tone", function(req, res, next) {
 	var feel = req.body.feel;
+	var key = req.body.key;
 	if (!feel) feel = "";
 	tone_analyzer.tone(
 		{
@@ -32,7 +36,13 @@ router.post("/watson/tone", function(req, res, next) {
 			else {
 				let tonePoint = generateTonePoint(tone);
 				let firstChord = generateFirstChord(tonePoint);
-				let chordProgession = generateChordProgression(firstChord, tonePoint);
+				let chordProgession = generateChordProgression(
+					firstChord,
+					tonePoint,
+					function(progression) {
+						if(progression.length > 3) cleanProgression(progression, key)
+					}
+				);
 			}
 		}
 	);
@@ -50,6 +60,17 @@ function authorizeHookTheory() {
 		.catch(err => {
 			console.log(err);
 		});
+}
+
+function cleanProgression(progression, key) {
+	console.log(progression);
+	let romanized = romanizeProgression(progression);
+	console.log(romanized);
+	if(key === 'random') {
+		let key = keys[Math.floor(Math.random() * keys.length)]
+	}
+	let cleanedProgression = tonalProgression.concrete(romanized, key);
+	console.log(cleanedProgression);
 }
 
 authorizeHookTheory();
@@ -101,16 +122,17 @@ function generateFirstChord(tonePoint) {
 	let minDistance = Math.min(...distances);
 	let chordIndex = distances.indexOf(minDistance);
 	//let generatedChord = chords[key].name;
-	let generatedChord = sample(chords[key].ids);
+	let ids = chords[chordIndex].ids;
+	let randomIndex = Math.floor(Math.random() * ids.length);
+	let generatedChord = ids[randomIndex];
 	return generatedChord;
 }
 
-function generateChordProgression(firstChord, originalTone) {
-	//TODO: return promise
+function generateChordProgression(firstChord, originalTone, callback) {
 	let chordProgression = [firstChord];
 	let currentURL = TRENDS + firstChord;
 	//we have one chord, loop for the three next chords
-	for (var i = 0; i < 3; i++) {
+	for (let i = 0; i < 3; i++) {
 		axios
 			.get(HOOK_THEORY + currentURL, {
 				headers: {
@@ -121,17 +143,20 @@ function generateChordProgression(firstChord, originalTone) {
 				let response = res.data;
 				let distances = [];
 				//go through every chord from the hooktheory response
-				for(var key in response) {
+				for (var key in response) {
 					let currentChord = response[key];
 					let currentID = currentChord.chord_ID;
 					//with the chord id, find the chord from our objects that matches and calculate tone distance
-					for(var chord in chords) {
+					for (var chord in chords) {
 						let ids = chords[chord].ids;
-						if(ids.find( id => id === currentID) ) {
+						if (ids.find(id => id === currentID)) {
 							//we know the IDS are unique, so if this returns anything but undefined we have the chord and tone
-							if(chordProgression.find(id => id === currentID)) break; //the chord progression already contains this chord, break
+							if (chordProgression.find(id => id === currentID))
+								break; //the chord progression already contains this chord, break
 							let chordTone = chords[chord].tone;
-							distances.push(euclideanDistance(chordTone, originalTone));
+							distances.push(
+								euclideanDistance(chordTone, originalTone)
+							);
 						}
 					}
 				}
@@ -139,14 +164,25 @@ function generateChordProgression(firstChord, originalTone) {
 				let chordIndex = distances.indexOf(minDistance);
 				let generatedChordID = response[chordIndex].chord_ID;
 				chordProgression.push(generatedChordID);
-				currentURL += ',' + generatedChordID;
-				console.log(chordProgression);
+				currentURL += "," + generatedChordID;
+				callback(chordProgression);
 			})
 			.catch(err => {
 				console.log(err);
 			});
 	}
-	return chordProgression;
+}
+
+function romanizeProgression(progression) {
+	var roman = "";
+	for (var index in progression) {
+		let chord = progression[index];
+		let romanChord = chordConversions[chord];
+		//console.log(romanChord + ": " + tonalChord.isKnownChord(romanChord))
+		console.log(tonalProgression.parseRomanChord(romanChord))
+		roman += romanChord + " ";
+	}
+	return roman.trim();
 }
 
 module.exports = router;

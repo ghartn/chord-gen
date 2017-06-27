@@ -1,6 +1,5 @@
 var scales = require("./scales");
 var chords = require("./chords");
-var sample = require("lodash/sample");
 
 function main() {
 	let tone = {
@@ -145,7 +144,9 @@ function generateFirstChord(tonePoint) {
 	let minDistance = Math.min(...distances);
 	let chordIndex = distances.indexOf(minDistance);
 	//let generatedChord = chords[key].name;
-	let generatedChord = sample(chords[key].ids);
+	let ids = chords[key].ids;
+	let randomIndex = Math.floor(Math.random*ids.length);
+	let generatedChord = ids[randomIndex];
 	return generatedChord;
 }
 
