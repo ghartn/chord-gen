@@ -2,22 +2,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
     height: 100%;
     width: 100%;
 }
 
 .App-vc {
-    display: table-cell;
-    vertical-align: middle;
     margin: 0 auto;
     min-width: 600px;
+}
+
+h1.title {
+    text-align: center;
 }
 
 button.btn {
     display: block;
     width: 100%;
-    margin: 0.5em 0;
+    margin: 1em 0;
     padding: 1em;
     border-radius: 0.2em;
     border: 1px solid #ccc;
@@ -33,4 +34,10 @@ button.btn {
     border-radius: 0.2em;
     border: 1px solid #ccc;
     font-family: 'Roboto', sans-serif;
+}
+
+.help-block {
+    color: #ccc;
+    font-size: 12px;
+    text-align: left;
 }

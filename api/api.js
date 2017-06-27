@@ -3,8 +3,13 @@ var router = express.Router();
 var axios = require("axios");
 var scales = require("./scales");
 var chords = require("./chords");
+var sample = require("lodash/sample");
 var authKey = null;
 const HOOK_THEORY = "https://api.hooktheory.com/v1/";
+const AUTH = "users/auth";
+const TRENDS = "trends/nodes?cp=";
+const USERNAME = "ghartn";
+const PASSWORD = "peanutbuttermonkeywrench";
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -26,27 +31,28 @@ router.post("/watson/tone", function(req, res, next) {
 			if (err) console.log(err);
 			else {
 				let tonePoint = generateTonePoint(tone);
-				let scale = determineScale(tonePoint);
-				let chord = generateChord(tonePoint);
-				res.send({
-					scale: scale,
-					chord: chord
-				});
+				let firstChord = generateFirstChord(tonePoint);
+				let chordProgession = generateChordProgression(firstChord, tonePoint);
 			}
 		}
 	);
 });
 
 function authorizeHookTheory() {
-	axios
-		.post( HOOK_THEORY + "users/auth", {
-			username: "ghartn",
-			password: "peanutbuttermonkeywrench"
+	return axios
+		.post(HOOK_THEORY + AUTH, {
+			username: USERNAME,
+			password: PASSWORD
 		})
 		.then(res => {
-			authKey = res.body.activkey;
+			authKey = res.data.activkey;
+		})
+		.catch(err => {
+			console.log(err);
 		});
 }
+
+authorizeHookTheory();
 
 function euclideanDistance(point1, point2) {
 	if (point1.length != point2.length) return -1;
@@ -86,18 +92,61 @@ function determineScale(tonePoint) {
 	return scale;
 }
 
-function generateChord(tonePoint) {
+function generateFirstChord(tonePoint) {
 	var distances = [];
-	var keys = [];
 	for (var key in chords) {
-		let chordPoint = chords[key];
-		keys.push(key);
+		let chordPoint = chords[key].tone;
 		distances.push(euclideanDistance(tonePoint, chordPoint));
 	}
 	let minDistance = Math.min(...distances);
 	let chordIndex = distances.indexOf(minDistance);
-	let generatedChord = keys[chordIndex];
+	//let generatedChord = chords[key].name;
+	let generatedChord = sample(chords[key].ids);
 	return generatedChord;
+}
+
+function generateChordProgression(firstChord, originalTone) {
+	//TODO: return promise
+	let chordProgression = [firstChord];
+	let currentURL = TRENDS + firstChord;
+	//we have one chord, loop for the three next chords
+	for (var i = 0; i < 3; i++) {
+		axios
+			.get(HOOK_THEORY + currentURL, {
+				headers: {
+					Authorization: "Bearer " + authKey
+				}
+			})
+			.then(res => {
+				let response = res.data;
+				let distances = [];
+				//go through every chord from the hooktheory response
+				for(var key in response) {
+					let currentChord = response[key];
+					let currentID = currentChord.chord_ID;
+					//with the chord id, find the chord from our objects that matches and calculate tone distance
+					for(var chord in chords) {
+						let ids = chords[chord].ids;
+						if(ids.find( id => id === currentID) ) {
+							//we know the IDS are unique, so if this returns anything but undefined we have the chord and tone
+							if(chordProgression.find(id => id === currentID)) break; //the chord progression already contains this chord, break
+							let chordTone = chords[chord].tone;
+							distances.push(euclideanDistance(chordTone, originalTone));
+						}
+					}
+				}
+				let minDistance = Math.min(...distances);
+				let chordIndex = distances.indexOf(minDistance);
+				let generatedChordID = response[chordIndex].chord_ID;
+				chordProgression.push(generatedChordID);
+				currentURL += ',' + generatedChordID;
+				console.log(chordProgression);
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+	return chordProgression;
 }
 
 module.exports = router;

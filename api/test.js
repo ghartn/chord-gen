@@ -1,5 +1,6 @@
 var scales = require("./scales");
 var chords = require("./chords");
+var sample = require("lodash/sample");
 
 function main() {
 	let tone = {
@@ -91,8 +92,9 @@ function main() {
 			]
 		}
 	};
+
 	let tonePoint = generateTonePoint(tone);
-	let chord = generateChord(tonePoint);
+	let chord = generateFirstChord(tonePoint);
 	console.log(chord);
 }
 
@@ -134,17 +136,16 @@ function determineScale(tonePoint) {
 	return scale;
 }
 
-function generateChord(tonePoint) {
+function generateFirstChord(tonePoint) {
 	var distances = [];
-	var keys = [];
 	for (var key in chords) {
-		let chordPoint = chords[key];
-		keys.push(key);
+		let chordPoint = chords[key].tone;
 		distances.push(euclideanDistance(tonePoint, chordPoint));
 	}
 	let minDistance = Math.min(...distances);
 	let chordIndex = distances.indexOf(minDistance);
-	let generatedChord = keys[chordIndex];
+	//let generatedChord = chords[key].name;
+	let generatedChord = sample(chords[key].ids);
 	return generatedChord;
 }
 

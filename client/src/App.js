@@ -27,16 +27,42 @@ class App extends Component {
 	}
 
 	render() {
+		//TODO: fix key sigs
 		return (
 			<div className="App">
 				<div className="App-vc">
+					<h1 className="title">Chord Progession Generator</h1>
+					<label for="key">Key: </label>
+					<select name="key" className="input-field">
+						<option name="random">Random</option>
+						<option name="C">C / Am</option>
+						<option name="C#">C# / Bbm</option>
+						<option name="D">D / Bm</option>
+						<option name="D#">D# / Cm</option>
+						<option name="E">E / C#m</option>
+						<option name="F">F / Dm</option>
+						<option name="F#">F# / Ebm</option>
+						<option name="G">G / Em</option>
+						<option name="G#">G# / Fm</option>
+						<option name="A">A / F#m</option>
+						<option name="A#">A# / Gm</option>
+						<option name="B">B / G#m</option>
+					</select>
+					<p className="help-block">
+						The chord progression returned will be abstracted to the
+						major key.
+					</p>
+					<label for="feel">Feeling: </label>
 					<input
 						className="input-field"
 						name="feel"
-						placeholder="How do you feel?"
+						placeholder="Can be anything, a song title, a feeling, random words..."
+						maxLength="50"
 						onChange={this.onChange}
 					/>
-					<button className="btn" onClick={this.onClick}>Generate a progression</button>
+					<button className="btn" onClick={this.onClick}>
+						Generate a progression
+					</button>
 				</div>
 			</div>
 		);

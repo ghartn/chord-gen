@@ -2,7 +2,7 @@
 //[anger, disgust, fear, joy, sadness]
 //definitely need to include all metrics (conversational tone, etc)
 //old scales var includes all
-var scalezs = [
+var scales = [
 	{
 		Major: [
 			0.023035,
@@ -120,43 +120,6 @@ var scalezs = [
 			0.50831,
 			0.617186,
 			0.004968
-		]
-	}
-];
-
-var scales = [
-	{
-		Major: [
-			0.023035,
-			0.007103,
-			0.02285,
-			0.796897,
-			0.108979,
-			0,
-			0,
-			0.88939,
-			0.515412,
-			0.187892,
-			0.692871,
-			0.719084,
-			0.026994
-		]
-	},
-	{
-		Minor: [
-			0.029871,
-			0.1876,
-			0.111788,
-			0.001751,
-			0.987435,
-			0,
-			0,
-			0.994704,
-			0.444793,
-			0.123048,
-			0.429357,
-			0.612557,
-			0.019919
 		]
 	}
 ];
