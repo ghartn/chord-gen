@@ -1,19 +1,29 @@
 import React, { Component } from "react";
 import "./App.css";
+import "./loader.css";
 import axios from "axios";
 
 class App extends Component {
 	constructor() {
 		super();
+		this.state = {
+			loading: false
+		}
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
 	}
 
 	onClick() {
+		this.setState({
+			loading: true
+		})
 		axios
 			.post("/api/watson/tone", this.state)
 			.then(res => {
 				console.log(res.data);
+				this.setState({
+					loading: false
+				})
 			})
 			.catch(err => {
 				console.log(err);
@@ -60,7 +70,7 @@ class App extends Component {
 						maxLength="50"
 						onChange={this.onChange}
 					/>
-					<button className="btn" onClick={this.onClick}>
+					<button className={(this.state.loading) ? "btn loader" : "btn"} disabled={this.state.loading} onClick={this.onClick}>
 						Generate a progression
 					</button>
 				</div>
