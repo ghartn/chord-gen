@@ -24,9 +24,9 @@ var tone_analyzer = new ToneAnalyzerV3({
 });
 
 router.post("/watson/tone", function(req, res, next) {
-	var feel = req.body.feel;
-	var key = req.body.key;
-	if (!feel) feel = "";
+	let feel = req.body.feel;
+	let key = req.body.key;
+	if (!feel) feel = "random";
 	tone_analyzer.tone(
 		{
 			text: feel
@@ -34,9 +34,10 @@ router.post("/watson/tone", function(req, res, next) {
 		function(err, tone) {
 			if (err) console.log(err);
 			else {
+				console.log(key);
 				let tonePoint = generateTonePoint(tone);
 				let firstChord = generateFirstChord(tonePoint);
-				let chordProgression = generateChordProgression(
+				generateChordProgression(
 					firstChord,
 					tonePoint,
 					key
@@ -64,7 +65,6 @@ function authorizeHookTheory() {
 
 function cleanProgression(progression, key) {
 	console.log(progression);
-	console.log(key, (key === random));
 	let romanized = romanizeProgression(progression);
 	console.log(romanized);
 	if (key === "random") {

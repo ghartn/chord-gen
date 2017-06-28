@@ -12,102 +12,38 @@ const PASSWORD = "peanutbuttermonkeywrench";
 var tonalProgression = require("tonal-progression");
 var tonalChord = require("tonal-chord");
 
+var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
+
+var tone_analyzer = new ToneAnalyzerV3({
+	url: "https://gateway.watsonplatform.net/tone-analyzer/api",
+	username: "7f240490-e244-45a2-90b4-8a3e11f13089",
+	password: "6iJSZ7uIBYk5",
+	version_date: "2016-05-19"
+});
+
 function main() {
-	let tone = {
-		document_tone: {
-			tone_categories: [
-				{
-					tones: [
-						{
-							score: 0.067271,
-							tone_id: "anger",
-							tone_name: "Anger"
-						},
-						{
-							score: 0.052218,
-							tone_id: "disgust",
-							tone_name: "Disgust"
-						},
-						{
-							score: 0.144031,
-							tone_id: "fear",
-							tone_name: "Fear"
-						},
-						{
-							score: 0.367503,
-							tone_id: "joy",
-							tone_name: "Joy"
-						},
-						{
-							score: 0.37734,
-							tone_id: "sadness",
-							tone_name: "Sadness"
-						}
-					],
-					category_id: "emotion_tone",
-					category_name: "Emotion Tone"
-				},
-				{
-					tones: [
-						{
-							score: 0.620279,
-							tone_id: "analytical",
-							tone_name: "Analytical"
-						},
-						{
-							score: 0,
-							tone_id: "confident",
-							tone_name: "Confident"
-						},
-						{
-							score: 0.994446,
-							tone_id: "tentative",
-							tone_name: "Tentative"
-						}
-					],
-					category_id: "language_tone",
-					category_name: "Language Tone"
-				},
-				{
-					tones: [
-						{
-							score: 0.142912,
-							tone_id: "openness_big5",
-							tone_name: "Openness"
-						},
-						{
-							score: 0.135114,
-							tone_id: "conscientiousness_big5",
-							tone_name: "Conscientiousness"
-						},
-						{
-							score: 0.047882,
-							tone_id: "extraversion_big5",
-							tone_name: "Extraversion"
-						},
-						{
-							score: 0.893164,
-							tone_id: "agreeableness_big5",
-							tone_name: "Agreeableness"
-						},
-						{
-							score: 0.004524,
-							tone_id: "emotional_range_big5",
-							tone_name: "Emotional Range"
-						}
-					],
-					category_id: "social_tone",
-					category_name: "Social Tone"
-				}
-			]
+	let feel = "who am i";
+	let key = "C";
+	tone_analyzer.tone(
+		{
+			text: feel
+		},
+		function(err, tone) {
+			console.log(key);
+			if (err) console.log(err);
+			else {
+				let tonePoint = generateTonePoint(tone);
+				let firstChord = generateFirstChord(tonePoint);
+				let chordProgression = generateChordProgression(
+					firstChord,
+					tonePoint,
+					key
+				).then(progression => {
+					console.log(progression);
+				});
+			}
 		}
-	};
-	let tonePoint = generateTonePoint(tone);
-	let firstChord = generateFirstChord(tonePoint);
-	let key = "random";
-	let chordProgression = generateChordProgression(firstChord, tonePoint, key).then( progression => {
-		console.log(progression);
-	});
+	);
 }
 
 function authorizeHookTheory() {
