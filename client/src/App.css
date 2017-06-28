@@ -41,3 +41,7 @@ button.btn {
     font-size: 12px;
     text-align: left;
 }
+
+button:disabled {
+    cursor: not-allowed;
+}

@@ -64,6 +64,7 @@ function authorizeHookTheory() {
 
 function cleanProgression(progression, key) {
 	console.log(progression);
+	console.log(key, (key === random));
 	let romanized = romanizeProgression(progression);
 	console.log(romanized);
 	if (key === "random") {

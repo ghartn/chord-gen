@@ -7,7 +7,9 @@ class App extends Component {
 	constructor() {
 		super();
 		this.state = {
-			loading: false
+			loading: false,
+			key: "random",
+			feel: ""
 		}
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -42,27 +44,27 @@ class App extends Component {
 			<div className="App">
 				<div className="App-vc">
 					<h1 className="title">Chord Progession Generator</h1>
-					<label for="key">Key: </label>
-					<select name="key" className="input-field">
-						<option name="random">Random</option>
-						<option name="C">C / Am</option>
-						<option name="C#">C# / Bbm</option>
-						<option name="D">D / Bm</option>
-						<option name="D#">D# / Cm</option>
-						<option name="E">E / C#m</option>
-						<option name="F">F / Dm</option>
-						<option name="F#">F# / Ebm</option>
-						<option name="G">G / Em</option>
-						<option name="G#">G# / Fm</option>
-						<option name="A">A / F#m</option>
-						<option name="A#">A# / Gm</option>
-						<option name="B">B / G#m</option>
+					<label>Key: </label>
+					<select name="key" className="input-field" onChange={this.onChange}>
+						<option value="random">Random</option>
+						<option value="C">C / Am</option>
+						<option value="C#">C# / Bbm</option>
+						<option value="D">D / Bm</option>
+						<option value="D#">D# / Cm</option>
+						<option value="E">E / C#m</option>
+						<option value="F">F / Dm</option>
+						<option value="F#">F# / Ebm</option>
+						<option value="G">G / Em</option>
+						<option value="G#">G# / Fm</option>
+						<option value="A">A / F#m</option>
+						<option value="A#">A# / Gm</option>
+						<option value="B">B / G#m</option>
 					</select>
 					<p className="help-block">
 						The chord progression returned will be abstracted to the
 						major key.
 					</p>
-					<label for="feel">Feeling: </label>
+					<label>Feeling: </label>
 					<input
 						className="input-field"
 						name="feel"
