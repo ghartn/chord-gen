@@ -3,15 +3,17 @@ import "./App.css";
 import "./loader.css";
 import axios from "axios";
 
+let state = {
+	loading: false,
+	key: "random",
+	feel: "",
+	progression: null
+};
+
 class App extends Component {
 	constructor() {
 		super();
-		this.state = {
-			loading: false,
-			key: "random",
-			feel: "",
-			progression: null
-		}
+		this.state = state;
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.mapProgression = this.mapProgression.bind(this);
@@ -20,14 +22,14 @@ class App extends Component {
 	onClick() {
 		this.setState({
 			loading: true
-		})
+		});
 		axios
 			.post("/api/watson/tone", this.state)
 			.then(res => {
 				this.setState({
 					progression: res.data,
 					loading: false
-				})
+				});
 			})
 			.catch(err => {
 				console.log(err);
@@ -40,15 +42,22 @@ class App extends Component {
 		});
 	}
 
+	componentWillUnmount() {
+		state = this.state;
+	}
+	
+
 	mapProgression() {
-		if(!this.state.progression) return;
+		if (!this.state.progression) return;
 		let progression = "";
-		for(var index in this.state.progression) {
+		for (var index in this.state.progression) {
 			progression += this.state.progression[index] + " ";
 		}
 		return (
-			<h3>{progression}</h3>
-		)
+			<h3>
+				{progression}
+			</h3>
+		);
 	}
 
 	render() {
@@ -58,7 +67,11 @@ class App extends Component {
 				<div className="App-vc">
 					<h1 className="title">Chord Progession Generator</h1>
 					<label>Key: </label>
-					<select name="key" className="input-field" onChange={this.onChange}>
+					<select
+						name="key"
+						className="input-field"
+						onChange={this.onChange}
+					>
 						<option value="random">Random</option>
 						<option value="C">C / Am</option>
 						<option value="C#">C# / Bbm</option>
@@ -86,8 +99,16 @@ class App extends Component {
 						onChange={this.onChange}
 					/>
 					<div className="btn-container">
-						<div className={(this.state.loading) ? "loader custom-loader" : "" }/>
-						<button className={"btn"} disabled={this.state.loading} onClick={this.onClick}>
+						<div
+							className={
+								this.state.loading ? "loader custom-loader" : ""
+							}
+						/>
+						<button
+							className={"btn"}
+							disabled={this.state.loading}
+							onClick={this.onClick}
+						>
 							Generate a progression
 						</button>
 					</div>
