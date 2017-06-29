@@ -45,3 +45,20 @@ button.btn {
 button:disabled {
     cursor: not-allowed;
 }
+
+.btn-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.loader.custom-loader {
+    color: #ffffff;
+    font-size: 10px;
+    position: absolute;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+    left: 50%;
+}

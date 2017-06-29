@@ -43,6 +43,7 @@ router.post("/watson/tone", function(req, res, next) {
 					key
 				).then(progression => {
 					console.log(progression);
+					res.send(progression);
 				});
 			}
 		}

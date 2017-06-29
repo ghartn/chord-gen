@@ -14,8 +14,10 @@
     "nodemon": "^1.11.0"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "tonal": "^0.69.6",
     "watson-developer-cloud": "^2.32.1"
   }
 }

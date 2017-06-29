@@ -9,10 +9,12 @@ class App extends Component {
 		this.state = {
 			loading: false,
 			key: "random",
-			feel: ""
+			feel: "",
+			progression: null
 		}
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.mapProgression = this.mapProgression.bind(this);
 	}
 
 	onClick() {
@@ -22,8 +24,8 @@ class App extends Component {
 		axios
 			.post("/api/watson/tone", this.state)
 			.then(res => {
-				console.log(res.data);
 				this.setState({
+					progression: res.data,
 					loading: false
 				})
 			})
@@ -36,6 +38,17 @@ class App extends Component {
 		this.setState({
 			[e.target.name]: e.target.value
 		});
+	}
+
+	mapProgression() {
+		if(!this.state.progression) return;
+		let progression = "";
+		for(var index in this.state.progression) {
+			progression += this.state.progression[index] + " ";
+		}
+		return (
+			<h3>{progression}</h3>
+		)
 	}
 
 	render() {
@@ -69,12 +82,16 @@ class App extends Component {
 						className="input-field"
 						name="feel"
 						placeholder="Can be anything, a song title, a feeling, random words..."
-						maxLength="50"
+						maxLength="100"
 						onChange={this.onChange}
 					/>
-					<button className={(this.state.loading) ? "btn loader" : "btn"} disabled={this.state.loading} onClick={this.onClick}>
-						Generate a progression
-					</button>
+					<div className="btn-container">
+						<div className={(this.state.loading) ? "loader custom-loader" : "" }/>
+						<button className={"btn"} disabled={this.state.loading} onClick={this.onClick}>
+							Generate a progression
+						</button>
+					</div>
+					{this.mapProgression()}
 				</div>
 			</div>
 		);
