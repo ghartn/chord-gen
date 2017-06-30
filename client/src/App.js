@@ -31,7 +31,7 @@ class App extends Component {
 				});
 				this.props.history.push("/progression", {
 					progression: res.data.progression,
-					returnedKey: res.data.key,
+					key: res.data.key,
 					notes: res.data.notes
 				});
 			})
@@ -56,6 +56,7 @@ class App extends Component {
 			<div className="App">
 				<div className="App-vc">
 					<h1 className="title">Chord Progession Generator</h1>
+					<div className="divider" />
 					<label>Key: </label>
 					<select
 						name="key"
