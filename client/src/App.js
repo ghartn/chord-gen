@@ -24,7 +24,7 @@ class App extends Component {
 			loading: true
 		});
 		axios
-			.post("/api/watson/tone", this.state)
+			.post("/api/generate", this.state)
 			.then(res => {
 				this.setState({
 					loading: false

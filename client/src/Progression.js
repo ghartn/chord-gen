@@ -75,7 +75,7 @@ class Progression extends Component {
 					}, "+" + index + "m");
 					players.push(tonePlayer);
 				}
-				window.transport = Tone.Transport;
+				console.log(Tone.Transport.state);
 				this.setState({
 					players: players
 				});

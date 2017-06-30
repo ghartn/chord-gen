@@ -26,7 +26,7 @@ var tone_analyzer = new ToneAnalyzerV3({
 	version_date: "2016-05-19"
 });
 
-router.post("/watson/tone", function(req, res, next) {
+router.post("/generate", function(req, res, next) {
 	let feel = req.body.feel;
 	let key = req.body.key;
 	key = generateKey(key);
@@ -56,6 +56,12 @@ router.post("/watson/tone", function(req, res, next) {
 			}
 		}
 	);
+});
+
+router.post("/midi", function(req,res,next) {
+	let progression = req.body.progression;
+	let tempo = req.body.tempo;
+	console.log(progression, tempo);
 });
 
 function authorizeHookTheory() {
