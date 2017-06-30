@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import "./App.css";
-import "./loader.css";
+import "./css/App.css";
+import "./css/loader.css";
 import axios from "axios";
+import { withRouter } from "react-router-dom";
 
 let state = {
 	loading: false,
@@ -16,7 +17,6 @@ class App extends Component {
 		this.state = state;
 		this.onClick = this.onClick.bind(this);
 		this.onChange = this.onChange.bind(this);
-		this.mapProgression = this.mapProgression.bind(this);
 	}
 
 	onClick() {
@@ -27,8 +27,12 @@ class App extends Component {
 			.post("/api/watson/tone", this.state)
 			.then(res => {
 				this.setState({
-					progression: res.data,
 					loading: false
+				});
+				this.props.history.push("/progression", {
+					progression: res.data.progression,
+					returnedKey: res.data.key,
+					notes: res.data.notes
 				});
 			})
 			.catch(err => {
@@ -44,20 +48,6 @@ class App extends Component {
 
 	componentWillUnmount() {
 		state = this.state;
-	}
-	
-
-	mapProgression() {
-		if (!this.state.progression) return;
-		let progression = "";
-		for (var index in this.state.progression) {
-			progression += this.state.progression[index] + " ";
-		}
-		return (
-			<h3>
-				{progression}
-			</h3>
-		);
 	}
 
 	render() {
@@ -112,11 +102,10 @@ class App extends Component {
 							Generate a progression
 						</button>
 					</div>
-					{this.mapProgression()}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default App;
+export default withRouter(App);

@@ -11,6 +11,8 @@ const USERNAME = "ghartn";
 const PASSWORD = "peanutbuttermonkeywrench";
 var tonalProgression = require("tonal-progression");
 var tonalChord = require("tonal-chord");
+var tonalArray = require("tonal-array");
+var tonalTranspose = require("tonal-transpose");
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -34,12 +36,13 @@ function main() {
 			else {
 				let tonePoint = generateTonePoint(tone);
 				let firstChord = generateFirstChord(tonePoint);
-				let chordProgression = generateChordProgression(
+				generateChordProgression(
 					firstChord,
 					tonePoint,
 					key
 				).then(progression => {
 					console.log(progression);
+					let chordNotes = getChordNotes(progression);
 				});
 			}
 		}
@@ -60,6 +63,8 @@ function authorizeHookTheory() {
 			console.log(err);
 		});
 }
+
+authorizeHookTheory();
 
 function cleanProgression(progression, key) {
 	console.log(progression);
@@ -218,6 +223,25 @@ function romanizeProgression(progression) {
 	return roman.trim();
 }
 
+function getChordNotes(progression) {
+	let noteArray = [];
+	for (var i in progression) {
+		let currentChord = progression[i];
+		tonalChord.isKnownChord(currentChord)
+			? (chordNotes = tonalChord.notes(currentChord))
+			: (chordNotes = null);
+		let fixedArr = [];
+		for(var j in chordNotes) {
+			//TODO: sometimes append 4 or 2? bass notes? better inversions
+			let note = chordNotes[j];
+			fixedArr.push(note + '3');
+		}
+		noteArray.push(fixedArr);
+	}
+	console.log(noteArray);
+	return noteArray;
+}
+
 function asyncLoop(o) {
 	var i = -1;
 
@@ -241,5 +265,3 @@ function findAllIndices(arr, elem) {
 	}
 	return indices;
 }
-
-authorizeHookTheory(); //also calls main

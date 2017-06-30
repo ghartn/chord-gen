@@ -15,6 +15,10 @@ h1.title {
     text-align: center;
 }
 
+h3.progression {
+    text-align: center;
+}
+
 button.btn {
     display: block;
     width: 100%;
@@ -61,4 +65,11 @@ button:disabled {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
     left: 50%;
+}
+
+i.play-btn {
+    font-size: 2em;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
 }

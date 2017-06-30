@@ -26,6 +26,8 @@ var tone_analyzer = new ToneAnalyzerV3({
 router.post("/watson/tone", function(req, res, next) {
 	let feel = req.body.feel;
 	let key = req.body.key;
+	key = generateKey(key);
+	console.log(key);
 	if (!feel) feel = "random";
 	tone_analyzer.tone(
 		{
@@ -34,7 +36,6 @@ router.post("/watson/tone", function(req, res, next) {
 		function(err, tone) {
 			if (err) console.log(err);
 			else {
-				console.log(key);
 				let tonePoint = generateTonePoint(tone);
 				let firstChord = generateFirstChord(tonePoint);
 				generateChordProgression(
@@ -43,7 +44,11 @@ router.post("/watson/tone", function(req, res, next) {
 					key
 				).then(progression => {
 					console.log(progression);
-					res.send(progression);
+					let response = {};
+					response.progression = progression;
+					response.notes = getChordNotes(progression);
+					response.key = key;
+					res.send(response);
 				});
 			}
 		}
@@ -64,13 +69,17 @@ function authorizeHookTheory() {
 		});
 }
 
+function generateKey(key) {
+	if (key === "random") {
+		key = keys[Math.floor(Math.random() * keys.length)];
+	}
+	return key;
+}
+
 function cleanProgression(progression, key) {
 	console.log(progression);
 	let romanized = romanizeProgression(progression);
 	console.log(romanized);
-	if (key === "random") {
-		key = keys[Math.floor(Math.random() * keys.length)];
-	}
 	let cleanedProgression = tonalProgression.concrete(romanized, key);
 	return cleanedProgression;
 }
@@ -219,6 +228,25 @@ function romanizeProgression(progression) {
 		roman += romanChord + " ";
 	}
 	return roman.trim();
+}
+
+function getChordNotes(progression) {
+	let noteArray = [];
+	for (var i in progression) {
+		let currentChord = progression[i];
+		tonalChord.isKnownChord(currentChord)
+			? (chordNotes = tonalChord.notes(currentChord))
+			: (chordNotes = null);
+		let fixedArr = [];
+		for(var j in chordNotes) {
+			//TODO: sometimes append 4 or 2? bass notes? better inversions
+			let note = chordNotes[j];
+			fixedArr.push(note + '3');
+		}
+		noteArray.push(fixedArr);
+	}
+	console.log(noteArray);
+	return noteArray;
 }
 
 function asyncLoop(o) {
