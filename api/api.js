@@ -11,9 +11,11 @@ const AUTH = "users/auth";
 const TRENDS = "trends/nodes?cp=";
 const USERNAME = "ghartn";
 const PASSWORD = "peanutbuttermonkeywrench";
+const VOICING_THRESHOLD = 4; //every note in a chord has to be atleast 3 semitones apart
 var tonalProgression = require("tonal-progression");
 var tonalChord = require("tonal-chord");
 var tonalNote = require("tonal-note");
+var tonalDistance = require("tonal-distance");
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -235,19 +237,54 @@ function getChordNotes(progression) {
 	let noteArray = [];
 	for (var i in progression) {
 		let currentChord = progression[i];
+		let chordNotes = [];
 		tonalChord.isKnownChord(currentChord)
 			? (chordNotes = tonalChord.notes(currentChord))
 			: (chordNotes = null);
-		let fixedArr = [];
-		for(var j in chordNotes) {
-			//TODO: sometimes append 4 or 2? bass notes? better inversions
-			let note = chordNotes[j];
-			fixedArr.push(tonalNote.simplify(note) + '3');
-		}
-		noteArray.push(fixedArr);
+		let chordVoicing = voiceChord(chordNotes);
+		noteArray.push(chordVoicing);
 	}
 	console.log(noteArray);
 	return noteArray;
+}
+
+function voiceChord(chordNotes) {
+	if (!chordNotes) return [];
+	let voicing = [];
+	for (var i in chordNotes) {
+		//TODO: sometimes append 4 or 2? bass notes? better inversions
+		let note = chordNotes[i];
+		note = tonalNote.simplify(note);
+		if (i == 0) {
+			//bass note, we will duplicate it in lower octave
+			voicing.push(note + "2");
+			voicing.push(note + "3");
+		} else {
+			//this algorithm is bad and makes no sense
+			let voiced = false;
+			let octave = 3;
+			while (!voiced) {
+				let noteToTry = note + octave;
+				for (var j = 1; j < voicing.length; j++) {
+					let noteVoiced = voicing[j];
+					let distance = Math.abs(
+						tonalDistance.semitones(noteVoiced, noteToTry)
+					);
+					console.log(noteVoiced, noteToTry, distance, voicing);
+					if (distance < VOICING_THRESHOLD) {
+						//note voice is too close to note already voiced
+						break;
+					} else {
+						voiced = true;
+						voicing.push(noteToTry);
+						break;
+					}
+				}
+				octave++;
+			}
+		}
+	}
+	return voicing;
 }
 
 function asyncLoop(o) {
