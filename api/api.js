@@ -16,6 +16,7 @@ var tonalProgression = require("tonal-progression");
 var tonalChord = require("tonal-chord");
 var tonalNote = require("tonal-note");
 var tonalDistance = require("tonal-distance");
+var MidiWriter = require("midi-writer-js");
 
 var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
@@ -58,10 +59,28 @@ router.post("/generate", function(req, res, next) {
 	);
 });
 
-router.post("/midi", function(req,res,next) {
+router.post("/midi", function(req, res, next) {
 	let progression = req.body.progression;
 	let tempo = req.body.tempo;
 	console.log(progression, tempo);
+
+	var track = new MidiWriter.Track();
+
+	track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
+
+	// Add some notes:
+	for (var i in progression) {
+		var note = new MidiWriter.NoteEvent({
+			pitch: progression[i],
+			duration: "4",
+			wait: i*4
+		});
+		track.addEvent(note);
+	}
+	// Generate a data URI
+	var write = new MidiWriter.Writer([track]);
+	//write.saveMIDI('generated-midi-' + new Date().toDateString());
+	res.send(write.dataURI());
 });
 
 function authorizeHookTheory() {
