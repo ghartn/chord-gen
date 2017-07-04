@@ -49,6 +49,7 @@ http://forum.hooktheory.com/t/trends-api-chord-input/272
 https://github.com/mexindian/Musical-chord-progressions/blob/master/Chord%20progression%20probability.R
 https://pappubahry.com/misc/piano_diaries/hooktheory_api/
 https://www.pinterest.com/pin/524950900296158812/
+http://www.lotusmusic.com/lm_chordprogressions.html
 
 later: for transposing progressions to actual chords
 	teoria.js, sharp11.js, tonal.js (one of these)
