@@ -15,11 +15,11 @@ class App extends Component {
 	constructor() {
 		super();
 		this.state = state;
-		this.onClick = this.onClick.bind(this);
+		this.generateProgression = this.generateProgression.bind(this);
 		this.onChange = this.onChange.bind(this);
 	}
 
-	onClick() {
+	generateProgression() {
 		this.setState({
 			loading: true
 		});
@@ -98,7 +98,7 @@ class App extends Component {
 						<button
 							className={"btn"}
 							disabled={this.state.loading}
-							onClick={this.onClick}
+							onClick={this.generateProgression}
 						>
 							Generate a progression
 						</button>

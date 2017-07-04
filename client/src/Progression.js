@@ -1,14 +1,20 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import Slider from "react-rangeslider";
 import Tone from "tone";
+import axios from "axios";
+import 'react-rangeslider/lib/index.css'
 import "./css/App.css";
 class Progression extends Component {
 	constructor() {
 		super();
-		this.state = { playing: false };
+		this.state = { playing: false, loading: false, bpm: 80 };
+		Tone.Transport.bpm.value = 80;
 		this.mapProgression = this.mapProgression.bind(this);
 		this.playProgression = this.playProgression.bind(this);
 		this.clearPlaying = this.clearPlaying.bind(this);
+		this.onBPMChange = this.onBPMChange.bind(this);
+		this.onMIDIGenerate = this.onMIDIGenerate.bind(this);
 	}
 
 	componentWillMount() {
@@ -38,6 +44,30 @@ class Progression extends Component {
 		);
 	}
 
+	onBPMChange(bpm) {
+		this.setState({
+			bpm: bpm
+		});
+		Tone.Transport.bpm.value = bpm;
+	}
+
+	onMIDIGenerate() {
+		this.setState({
+			loading: true
+		});
+		axios
+			.post("/api/midi", this.state)
+			.then(res => {
+				window.open(res.data);
+				this.setState({
+					loading: false
+				});
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+
 	clearPlaying() {
 		if (this.state.players) {
 			for (var i in this.state.players) {
@@ -56,7 +86,7 @@ class Progression extends Component {
 			},
 			() => {
 				Tone.Master.mute = !this.state.playing;
-				if(!this.state.playing) {
+				if (!this.state.playing) {
 					Tone.Transport.stop();
 					this.clearPlaying();
 					return;
@@ -65,7 +95,6 @@ class Progression extends Component {
 				Tone.Transport.start();
 				this.clearPlaying();
 				var polySynth = new Tone.PolySynth(4, Tone.Synth).toMaster();
-				Tone.Transport.bpm.value = 128;
 				if (!this.state.notes) return;
 				let players = [];
 				for (let index in this.state.notes) {
@@ -90,6 +119,13 @@ class Progression extends Component {
 					<h1 className="title">Chord Progession</h1>
 					<div className="divider" />
 					{this.mapProgression()}
+					<Slider
+						min={20}
+						max={200}
+						step={1}
+						value={this.state.bpm}
+						onChange={this.onBPMChange}
+					/>
 					<i
 						className={
 							this.state.playing
@@ -98,6 +134,20 @@ class Progression extends Component {
 						}
 						onClick={this.playProgression}
 					/>
+					<div className="btn-container">
+						<div
+							className={
+								this.state.loading ? "loader custom-loader" : ""
+							}
+						/>
+						<button
+							className={"btn"}
+							disabled={this.state.loading}
+							onClick={this.onMIDIGenerate}
+						>
+							Generate MIDI
+						</button>
+					</div>
 				</div>
 			</div>
 		);

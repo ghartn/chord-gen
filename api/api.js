@@ -48,27 +48,26 @@ router.post("/generate", function(req, res, next) {
 });
 
 router.post("/midi", function(req, res, next) {
-	let progression = req.body.progression;
-	let tempo = req.body.tempo;
-	console.log(progression, tempo);
+	let notes = req.body.notes;
+	let bpm = req.body.bpm;
 
 	var track = new MidiWriter.Track();
 
 	track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
 
 	// Add some notes:
-	for (var i in progression) {
+	for (var i in notes) {
 		var note = new MidiWriter.NoteEvent({
-			pitch: progression[i],
+			pitch: notes[i],
 			duration: "4",
-			wait: i * 4
+			//wait: i * 4
 		});
 		track.addEvent(note);
 	}
 	// Generate a data URI
 	var write = new MidiWriter.Writer([track]);
 	//write.saveMIDI('generated-midi-' + new Date().toDateString());
-	res.send(write.dataURI());
+	res.send(write.dataUri());
 });
 
 function authorizeHookTheory() {
