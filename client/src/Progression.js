@@ -119,13 +119,6 @@ class Progression extends Component {
 					<h1 className="title">Chord Progession</h1>
 					<div className="divider" />
 					{this.mapProgression()}
-					<Slider
-						min={20}
-						max={200}
-						step={1}
-						value={this.state.bpm}
-						onChange={this.onBPMChange}
-					/>
 					<i
 						className={
 							this.state.playing
@@ -133,6 +126,14 @@ class Progression extends Component {
 								: "fa fa-play play-btn"
 						}
 						onClick={this.playProgression}
+					/>
+					<label>BPM</label>
+					<Slider
+						min={20}
+						max={200}
+						step={1}
+						value={this.state.bpm}
+						onChange={this.onBPMChange}
 					/>
 					<div className="btn-container">
 						<div

@@ -30,18 +30,16 @@ router.post("/generate", function(req, res, next) {
 				console.log(key);
 				let tonePoint = theory.generateTonePoint(tone);
 				let firstChord = theory.generateFirstChord(tonePoint);
-				theory.generateChordProgression(
-					firstChord,
-					tonePoint,
-					key
-				).then(progression => {
-					console.log(progression);
-					let response = {};
-					response.progression = progression;
-					response.notes = theory.getChordNotes(progression);
-					response.key = key;
-					res.send(response);
-				});
+				theory
+					.generateChordProgression(firstChord, tonePoint, key)
+					.then(progression => {
+						console.log(progression);
+						let response = {};
+						response.progression = progression;
+						response.notes = theory.getChordNotes(progression);
+						response.key = key;
+						res.send(response);
+					});
 			}
 		}
 	);
@@ -53,17 +51,21 @@ router.post("/midi", function(req, res, next) {
 
 	var track = new MidiWriter.Track();
 
+	track.setTempo(bpm);
+
 	track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
 
-	// Add some notes:
-	for (var i in notes) {
-		var note = new MidiWriter.NoteEvent({
-			pitch: notes[i],
-			duration: "4",
-			//wait: i * 4
-		});
-		track.addEvent(note);
-	}
+	track.addEvent(
+		[
+			new MidiWriter.NoteEvent({ pitch: notes[0], duration: "4" }),
+			new MidiWriter.NoteEvent({ pitch: notes[1], duration: "4" }),
+			new MidiWriter.NoteEvent({ pitch: notes[2], duration: "4" }),
+			new MidiWriter.NoteEvent({ pitch: notes[3], duration: "4" }),
+		],
+		function(event, index) {
+			return { sequential: true };
+		}
+	);
 	// Generate a data URI
 	var write = new MidiWriter.Writer([track]);
 	//write.saveMIDI('generated-midi-' + new Date().toDateString());
