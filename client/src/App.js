@@ -4,17 +4,15 @@ import "./css/loader.css";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 
-let state = {
-	loading: false,
-	key: "random",
-	feel: "",
-	progression: null
-};
-
 class App extends Component {
 	constructor() {
 		super();
-		this.state = state;
+		this.state = {
+			loading: false,
+			key: "random",
+			feel: "",
+			progression: null
+		};
 		this.generateProgression = this.generateProgression.bind(this);
 		this.onChange = this.onChange.bind(this);
 	}
@@ -44,10 +42,6 @@ class App extends Component {
 		this.setState({
 			[e.target.name]: e.target.value
 		});
-	}
-
-	componentWillUnmount() {
-		state = this.state;
 	}
 
 	render() {

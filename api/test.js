@@ -52,4 +52,6 @@ function authorizeHookTheory() {
 		});
 }
 
-authorizeHookTheory();
+theory.test();
+
+//authorizeHookTheory();

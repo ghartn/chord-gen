@@ -206,3 +206,25 @@ var voiceChord = function(chordNotes) {
 	}
 	return voicing;
 };
+
+module.exports.test = function() {
+	// for(var key in keys) {
+	// 	let curKey = keys[key];
+	// 	let prog = ['Dm'];
+	// 	let abstracted = tonalProgression.abstract(prog,curKey);
+	// 	console.log(abstracted, "in key of " + curKey);
+	// 	for(chord in abstracted) {
+	// 		let curChord = abstracted[chord];
+	// 		//console.log(curChord)
+	// 		for(var key in Object.keys(chordConversions)) {
+	// 			let keyToTry = Object.keys(chordConversions)[key];
+	// 			if(chordConversions[keyToTry] === curChord) {
+	// 				console.log(keyToTry)
+	// 			}
+	// 		}
+	// 	}
+	// }
+	let prog = [ 'b47', 'b77', '1', '57' ];
+	prog = cleanProgression(prog, 'B');	
+	module.exports.getChordNotes(prog);
+}
