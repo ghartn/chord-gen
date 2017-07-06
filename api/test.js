@@ -1,10 +1,10 @@
-var axios = require("axios");
-var theory = require("./theory");
-var api = require("./credentials");
+let axios = require("axios");
+let theory = require("./theory");
+let api = require("./credentials");
 
-var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
+let ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
-var tone_analyzer = new ToneAnalyzerV3({
+let tone_analyzer = new ToneAnalyzerV3({
 	url: api.WATSON,
 	username: api.WATSON_USERNAME,
 	password: api.WATSON_PASSWORD,
@@ -13,25 +13,23 @@ var tone_analyzer = new ToneAnalyzerV3({
 
 function main() {
 	let feel = "who am i";
-	var key = "E";
+	let key = "random";
 	tone_analyzer.tone(
 		{
 			text: feel
 		},
 		function(err, tone) {
-			console.log(key);
 			if (err) console.log(err);
 			else {
 				let tonePoint = theory.generateTonePoint(tone);
 				let firstChord = theory.generateFirstChord(tonePoint);
-				theory.generateChordProgression(
-					firstChord,
-					tonePoint,
-					key
-				).then(progression => {
-					console.log(progression);
-					let chordNotes = theory.getChordNotes(progression);
-				});
+				key = theory.generateKey(key, tonePoint);
+				theory
+					.generateChordProgression(firstChord, tonePoint, key)
+					.then(progression => {
+						console.log(progression);
+						let chordNotes = theory.getChordNotes(progression);
+					});
 			}
 		}
 	);
@@ -52,6 +50,31 @@ function authorizeHookTheory() {
 		});
 }
 
-theory.test();
+authorizeHookTheory();
 
-//authorizeHookTheory();
+function test() {
+	let feel = "descent, downwards towards depths";
+	let key = "random";
+	tone_analyzer.tone(
+		{
+			text: feel
+		},
+		function(err, tone) {
+			if (err) console.log(err);
+			else {
+				let tonePoint = theory.generateTonePoint(tone);
+				console.log(tonePoint);
+				// let firstChord = theory.generateFirstChord(tonePoint);
+				// key = theory.generateKey(key, tonePoint);
+				// theory
+				// 	.generateChordProgression(firstChord, tonePoint, key)
+				// 	.then(progression => {
+				// 		console.log(progression);
+				// 		let chordNotes = theory.getChordNotes(progression);
+				// 	});
+			}
+		}
+	);
+}
+
+//test();

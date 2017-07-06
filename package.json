@@ -17,6 +17,7 @@
     "axios": "^0.16.2",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "interval-simplify": "^1.0.1",
     "midi-writer-js": "^1.4.8",
     "tonal": "^0.69.6",
     "watson-developer-cloud": "^2.32.1"

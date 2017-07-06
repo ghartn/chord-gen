@@ -1,14 +1,14 @@
-var express = require("express");
-var router = express.Router();
-var axios = require("axios");
-var authKey = null;
-var MidiWriter = require("midi-writer-js");
-var theory = require("./theory");
-var api = require("./credentials");
+let express = require("express");
+let router = express.Router();
+let axios = require("axios");
+let authKey = null;
+let MidiWriter = require("midi-writer-js");
+let theory = require("./theory");
+let api = require("./credentials");
 
-var ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
+let ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
-var tone_analyzer = new ToneAnalyzerV3({
+let tone_analyzer = new ToneAnalyzerV3({
 	url: api.WATSON,
 	username: api.WATSON_USERNAME,
 	password: api.WATSON_PASSWORD,
@@ -17,8 +17,7 @@ var tone_analyzer = new ToneAnalyzerV3({
 
 router.post("/generate", function(req, res, next) {
 	let feel = req.body.feel;
-	var key = req.body.key;
-	key = theory.generateKey(key);
+	let key = req.body.key;
 	if (!feel) feel = "random";
 	tone_analyzer.tone(
 		{
@@ -30,6 +29,7 @@ router.post("/generate", function(req, res, next) {
 				console.log(key);
 				let tonePoint = theory.generateTonePoint(tone);
 				let firstChord = theory.generateFirstChord(tonePoint);
+				key = theory.generateKey(key, tonePoint);
 				theory
 					.generateChordProgression(firstChord, tonePoint, key)
 					.then(progression => {

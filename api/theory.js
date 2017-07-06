@@ -1,22 +1,46 @@
-var axios = require("axios");
-var utils = require("./utils");
-var api = require("./credentials");
-var scales = require("./scales");
-var chords = require("./chords");
-var keys = require("./keys");
-var chordConversions = require("./chordConversions");
+let axios = require("axios");
+let utils = require("./utils");
+let api = require("./credentials");
+let chords = require("./chords");
+let keys = require("./keys");
+let transitions = require("./transitions");
+let chordConversions = require("./chordConversions");
 
-var tonalProgression = require("tonal-progression");
-var tonalChord = require("tonal-chord");
-var tonalNote = require("tonal-note");
-var tonalDistance = require("tonal-distance");
+let tonalProgression = require("tonal-progression");
+let tonalChord = require("tonal-chord");
+let tonalNote = require("tonal-note");
+let tonalDistance = require("tonal-distance");
+let tonalInterval = require("tonal-interval");
+let tonalKey = require("tonal-key");
+let intervalSimplify = require("interval-simplify");
+
 const VOICING_THRESHOLD = 4;
 
-module.exports.generateKey = function(key) {
+module.exports.generateKey = function(key, tonePoint) {
 	if (key === "random") {
-		key = keys[Math.floor(Math.random() * keys.length)];
+		key = determineKey(tonePoint);
 	}
 	return key;
+};
+
+var determineKey = function(tonePoint) {
+	let distances = [];
+	for (var index in keys.keyFeels) {
+		let keyPoint = keys.keyFeels[index].tone;
+		distances.push(utils.euclideanDistance(tonePoint, keyPoint));
+	}
+	let minDistance = Math.min(...distances);
+	let keyIndex = distances.indexOf(minDistance);
+	let generatedKey = keys.keyFeels[keyIndex];
+	let tonic = generatedKey.tonic;
+	if (generatedKey.type === "Minor") {
+		let relative = tonalKey.relative(
+			"major",
+			generatedKey.tonic + " " + generatedKey.type
+		);
+		tonic = tonalKey.tonic(relative);
+	}
+	return tonic;
 };
 
 var cleanProgression = function(progression, key) {
@@ -41,7 +65,7 @@ module.exports.generateTonePoint = function(tone) {
 };
 
 module.exports.generateFirstChord = function(tonePoint) {
-	var distances = [];
+	let distances = [];
 	for (var key in chords) {
 		let chordPoint = chords[key].tone;
 		distances.push(utils.euclideanDistance(tonePoint, chordPoint));
@@ -66,10 +90,11 @@ module.exports.generateChordProgression = function(
 		utils.asyncLoop({
 			length: 3,
 			functionToLoop: (loop, i) =>
-				generateNextChord(
+				generateNextChord2(
 					chordProgression,
 					currentURL,
 					originalTone,
+					key,
 					loop,
 					i
 				),
@@ -79,6 +104,99 @@ module.exports.generateChordProgression = function(
 		});
 	});
 	return promise;
+};
+
+var generateNextChord2 = function(
+	chordProgression,
+	currentURL,
+	originalTone,
+	key,
+	loop,
+	i
+) {
+	console.log(chordProgression);
+	axios
+		.get(api.HOOK_THEORY + currentURL, {
+			headers: {
+				Authorization: "Bearer " + api.authKey
+			}
+		})
+		.then(res => {
+			let distances = [];
+			let originalIndexes = []; //this doesn't support every hooktheory chord, so we track original indexes for mapping
+			let response = res.data;
+			//go through every chord from the hooktheory response
+			for (var key in response) {
+				let currentChord = response[key];
+				let currentID = currentChord.chord_ID;
+				let chordToTry = chordConversions.find(
+					conversion => conversion.hook === currentID
+				);
+				if (chordToTry && chordToTry.type !== "?") {
+					let roman = tonalProgression.parseRomanChord(
+						chordToTry.roman
+					);
+					if (roman) {
+						let prevChord = chordConversions.find(
+							conversion =>
+								conversion.hook === chordProgression[i]
+						);
+						let interval = tonalDistance.interval(
+							tonalProgression.parseRomanChord(prevChord.roman)
+								.root,
+							roman.root
+						);
+						let simplifiedInterval = intervalSimplify(interval);
+						interval = tonalInterval.semitones(simplifiedInterval);
+						// let couplet = [
+						// 	currentID,
+						// 	prevChord.type,
+						// 	chordToTry.type,
+						// 	interval
+						// ];
+						// console.log(couplet);
+						let chordTone = transitions.find(
+							transition =>
+								transition.first === prevChord.type &&
+								transition.second === chordToTry.type &&
+								transition.interval == interval
+						);
+						if (chordTone) {
+							distances.push(
+								utils.euclideanDistance(
+									originalTone,
+									chordTone.tone
+								)
+							);
+							originalIndexes.push(key);
+						}
+					}
+				}
+			}
+			let sortedDistances = distances.sort((a, b) => a > b);
+			let found = false;
+			var generatedChordID;
+			for (var j = 0; j < sortedDistances.length; j++) {
+				let currentDistance = sortedDistances[j];
+				let indicies = utils.findAllIndices(distances, currentDistance);
+				for (var k = 0; k < indicies.length; k++) {
+					generatedChordID =
+						response[originalIndexes[indicies[k]]].chord_ID;
+					if (!chordProgression.find(id => id === generatedChordID)) {
+						found = true;
+					}
+					if (found) break;
+				}
+				if (found) break;
+			}
+			chordProgression.push(generatedChordID);
+			currentURL += "," + generatedChordID;
+			console.log(chordProgression);
+			loop();
+		})
+		.catch(err => {
+			console.log(err.data);
+		});
 };
 
 var generateNextChord = function(
@@ -146,7 +264,9 @@ var romanizeProgression = function(progression) {
 	var roman = "";
 	for (var index in progression) {
 		let chord = progression[index];
-		let romanChord = chordConversions[chord];
+		let romanChord = chordConversions.find(
+			conversion => conversion.hook === chord
+		).roman;
 		//console.log(tonalProgression.parseRomanChord(romanChord));
 		roman += romanChord + " ";
 	}
@@ -190,7 +310,7 @@ var voiceChord = function(chordNotes) {
 					let distance = Math.abs(
 						tonalDistance.semitones(noteVoiced, noteToTry)
 					);
-					console.log(noteVoiced, noteToTry, distance, voicing);
+					//console.log(noteVoiced, noteToTry, distance, voicing);
 					if (distance < VOICING_THRESHOLD) {
 						//note voice is too close to note already voiced
 						break;
@@ -206,25 +326,3 @@ var voiceChord = function(chordNotes) {
 	}
 	return voicing;
 };
-
-module.exports.test = function() {
-	// for(var key in keys) {
-	// 	let curKey = keys[key];
-	// 	let prog = ['Dm'];
-	// 	let abstracted = tonalProgression.abstract(prog,curKey);
-	// 	console.log(abstracted, "in key of " + curKey);
-	// 	for(chord in abstracted) {
-	// 		let curChord = abstracted[chord];
-	// 		//console.log(curChord)
-	// 		for(var key in Object.keys(chordConversions)) {
-	// 			let keyToTry = Object.keys(chordConversions)[key];
-	// 			if(chordConversions[keyToTry] === curChord) {
-	// 				console.log(keyToTry)
-	// 			}
-	// 		}
-	// 	}
-	// }
-	let prog = [ 'b47', 'b77', '1', '57' ];
-	prog = cleanProgression(prog, 'B');	
-	module.exports.getChordNotes(prog);
-}
