@@ -130,7 +130,7 @@ var generateNextChord2 = function(
 				let currentChord = response[key];
 				let currentID = currentChord.chord_ID;
 				let chordToTry = chordConversions.find(
-					conversion => conversion.hook === currentID
+					conversion => conversion.id === currentID
 				);
 				if (chordToTry && chordToTry.type !== "?") {
 					let roman = tonalProgression.parseRomanChord(
@@ -139,7 +139,7 @@ var generateNextChord2 = function(
 					if (roman) {
 						let prevChord = chordConversions.find(
 							conversion =>
-								conversion.hook === chordProgression[i]
+								conversion.id === chordProgression[i]
 						);
 						let interval = tonalDistance.interval(
 							tonalProgression.parseRomanChord(prevChord.roman)
@@ -265,7 +265,7 @@ var romanizeProgression = function(progression) {
 	for (var index in progression) {
 		let chord = progression[index];
 		let romanChord = chordConversions.find(
-			conversion => conversion.hook === chord
+			conversion => conversion.id === chord
 		).roman;
 		//console.log(tonalProgression.parseRomanChord(romanChord));
 		roman += romanChord + " ";
