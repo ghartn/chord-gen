@@ -93,3 +93,9 @@ div.divider {
     height: 1px;
     background-color: #aaa;
 }
+
+input
+select:focus,
+textarea {
+  font-size: 16px;
+}
