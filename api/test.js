@@ -52,29 +52,4 @@ function authorizeHookTheory() {
 
 authorizeHookTheory();
 
-function test() {
-	let feel = "descent, downwards towards depths";
-	let key = "random";
-	tone_analyzer.tone(
-		{
-			text: feel
-		},
-		function(err, tone) {
-			if (err) console.log(err);
-			else {
-				let tonePoint = theory.generateTonePoint(tone);
-				console.log(tonePoint);
-				// let firstChord = theory.generateFirstChord(tonePoint);
-				// key = theory.generateKey(key, tonePoint);
-				// theory
-				// 	.generateChordProgression(firstChord, tonePoint, key)
-				// 	.then(progression => {
-				// 		console.log(progression);
-				// 		let chordNotes = theory.getChordNotes(progression);
-				// 	});
-			}
-		}
-	);
-}
-
-//test();
+//theory.test();

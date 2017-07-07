@@ -138,8 +138,7 @@ var generateNextChord2 = function(
 					);
 					if (roman) {
 						let prevChord = chordConversions.find(
-							conversion =>
-								conversion.id === chordProgression[i]
+							conversion => conversion.id === chordProgression[i]
 						);
 						let interval = tonalDistance.interval(
 							tonalProgression.parseRomanChord(prevChord.roman)
@@ -325,4 +324,14 @@ var voiceChord = function(chordNotes) {
 		}
 	}
 	return voicing;
+};
+
+module.exports.test = function() {
+	for (var i in chordConversions) {
+		let chord = chordConversions[i];
+		let parsed = tonalProgression.concrete([chord.roman], "C");
+		if (!tonalChord.isKnownChord(parsed) && chord.type !== '?') {
+			console.log(chord.id, chord.roman, parsed);
+		}
+	}
 };
