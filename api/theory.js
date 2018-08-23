@@ -1,6 +1,7 @@
 let axios = require("axios");
 let utils = require("./utils");
-let api = require("./credentials");
+let credentials = require("./credentials");
+let urls = require("./urls");
 let chords = require("./chords");
 let keys = require("./keys");
 let transitions = require("./transitions");
@@ -85,7 +86,7 @@ module.exports.generateChordProgression = function(
 	key
 ) {
 	let chordProgression = [firstChord];
-	currentURL = api.TRENDS + firstChord;
+	currentURL = urls.TRENDS + firstChord;
 	let promise = new Promise((resolve, reject) => {
 		utils.asyncLoop({
 			length: 3,
@@ -116,9 +117,9 @@ var generateNextChord2 = function(
 ) {
 	console.log(chordProgression);
 	axios
-		.get(api.HOOK_THEORY + currentURL, {
+		.get(urls.HOOK_THEORY + currentURL, {
 			headers: {
-				Authorization: "Bearer " + api.authKey
+				Authorization: "Bearer " + credentials.authKey
 			}
 		})
 		.then(res => {
@@ -133,16 +134,13 @@ var generateNextChord2 = function(
 					conversion => conversion.id === currentID
 				);
 				if (chordToTry && chordToTry.type !== "?") {
-					let roman = tonalProgression.parseRomanChord(
-						chordToTry.roman
-					);
+					let roman = tonalProgression.parseRomanChord(chordToTry.roman);
 					if (roman) {
 						let prevChord = chordConversions.find(
 							conversion => conversion.id === chordProgression[i]
 						);
 						let interval = tonalDistance.interval(
-							tonalProgression.parseRomanChord(prevChord.roman)
-								.root,
+							tonalProgression.parseRomanChord(prevChord.roman).root,
 							roman.root
 						);
 						let simplifiedInterval = intervalSimplify(interval);
@@ -162,10 +160,7 @@ var generateNextChord2 = function(
 						);
 						if (chordTone) {
 							distances.push(
-								utils.euclideanDistance(
-									originalTone,
-									chordTone.tone
-								)
+								utils.euclideanDistance(originalTone, chordTone.tone)
 							);
 							originalIndexes.push(key);
 						}
@@ -179,8 +174,7 @@ var generateNextChord2 = function(
 				let currentDistance = sortedDistances[j];
 				let indicies = utils.findAllIndices(distances, currentDistance);
 				for (var k = 0; k < indicies.length; k++) {
-					generatedChordID =
-						response[originalIndexes[indicies[k]]].chord_ID;
+					generatedChordID = response[originalIndexes[indicies[k]]].chord_ID;
 					if (!chordProgression.find(id => id === generatedChordID)) {
 						found = true;
 					}
@@ -206,9 +200,9 @@ var generateNextChord = function(
 	i
 ) {
 	axios
-		.get(api.HOOK_THEORY + currentURL, {
+		.get(urls.HOOK_THEORY + currentURL, {
 			headers: {
-				Authorization: "Bearer " + api.authKey
+				Authorization: "Bearer " + credentials.authKey
 			}
 		})
 		.then(res => {
@@ -226,9 +220,7 @@ var generateNextChord = function(
 						//we know the IDS are unique, so if this returns anything but undefined we have the chord and tone
 						let chordTone = chords[chord].tone;
 						//console.log(chordProgression, currentID);
-						distances.push(
-							utils.euclideanDistance(chordTone, originalTone)
-						);
+						distances.push(utils.euclideanDistance(chordTone, originalTone));
 						originalIndexes.push(key);
 					}
 				}
@@ -240,8 +232,7 @@ var generateNextChord = function(
 				let currentDistance = sortedDistances[j];
 				let indicies = utils.findAllIndices(distances, currentDistance);
 				for (var k = 0; k < indicies.length; k++) {
-					generatedChordID =
-						response[originalIndexes[indicies[k]]].chord_ID;
+					generatedChordID = response[originalIndexes[indicies[k]]].chord_ID;
 					if (!chordProgression.find(id => id === generatedChordID)) {
 						found = true;
 					}
@@ -330,7 +321,7 @@ module.exports.test = function() {
 	for (var i in chordConversions) {
 		let chord = chordConversions[i];
 		let parsed = tonalProgression.concrete([chord.roman], "C");
-		if (!tonalChord.isKnownChord(parsed) && chord.type !== '?') {
+		if (!tonalChord.isKnownChord(parsed) && chord.type !== "?") {
 			console.log(chord.id, chord.roman, parsed);
 		}
 	}

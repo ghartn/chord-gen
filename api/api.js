@@ -4,14 +4,15 @@ let axios = require("axios");
 let authKey = null;
 let MidiWriter = require("midi-writer-js");
 let theory = require("./theory");
-let api = require("./credentials");
+let credentials = require("./credentials");
+let urls = require("./urls");
 
 let ToneAnalyzerV3 = require("watson-developer-cloud/tone-analyzer/v3");
 
 let tone_analyzer = new ToneAnalyzerV3({
-	url: api.WATSON,
-	username: api.WATSON_USERNAME,
-	password: api.WATSON_PASSWORD,
+	url: urls.WATSON,
+	username: credentials.WATSON_USERNAME,
+	password: credentials.WATSON_PASSWORD,
 	version_date: "2016-05-19"
 });
 
@@ -60,7 +61,7 @@ router.post("/midi", function(req, res, next) {
 			new MidiWriter.NoteEvent({ pitch: notes[0], duration: "4" }),
 			new MidiWriter.NoteEvent({ pitch: notes[1], duration: "4" }),
 			new MidiWriter.NoteEvent({ pitch: notes[2], duration: "4" }),
-			new MidiWriter.NoteEvent({ pitch: notes[3], duration: "4" }),
+			new MidiWriter.NoteEvent({ pitch: notes[3], duration: "4" })
 		],
 		function(event, index) {
 			return { sequential: true };
@@ -74,12 +75,12 @@ router.post("/midi", function(req, res, next) {
 
 function authorizeHookTheory() {
 	return axios
-		.post(api.HOOK_THEORY + api.AUTH, {
-			username: api.HOOK_USERNAME,
-			password: api.HOOK_PASSWORD
+		.post(urls.HOOK_THEORY + urls.AUTH, {
+			username: credentials.HOOK_USERNAME,
+			password: credentials.HOOK_PASSWORD
 		})
 		.then(res => {
-			api.authKey = res.data.activkey;
+			credentials.authKey = res.data.activkey;
 		})
 		.catch(err => {
 			console.log(err);
